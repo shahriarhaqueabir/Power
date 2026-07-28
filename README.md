@@ -2,20 +2,20 @@
 
 # PowershellOps
 
-**Advanced Operational Intelligence & Security Auditing Suite for Windows.**  
-*Private. High-Performance. Local AI Integration.*
+**Advanced Operational Intelligence & Universal AI Companion for Windows.**  
+*Private. High-Performance. Local Agentic Stack.*
 
-[![PowerShell](https://img.shields.io/badge/PowerShell-7.2%2B-0078D4?logo=powershell&logoColor=white)](#)
+[![PowerShell](https://img.shields.io/badge/PowerShell-7.6_LTS-0078D4?logo=powershell&logoColor=white)](#)
 [![AI](https://img.shields.io/badge/AI-Ollama_(local)-8A2BE2?logo=ollama&logoColor=white)](#)
 [![License](https://img.shields.io/badge/License-MIT-green)](#)
 [![Status](https://img.shields.io/badge/Version-11.3-orange)](#)
 
 ---
 
-**81 Enterprise Utilities · 7 Automated Workflows · Local LLM Integration · Zero Cloud Dependencies**  
-*Muted, professional precision for the modern System Administrator.*
+**81 Utility Tools · 7 Operational Workflows · Universal AI Hub · Zero Cloud Dependencies**  
+*Muted, professional precision for the modern Technical Specialist.*
 
-[Features](#-key-capabilities) • [Installation](#-provisioning) • [Quick Start](#-interface) • [AI & Memory](#-local-intelligence) • [Security](#-security-audit)
+[Features](#-key-capabilities) • [Installation](#-provisioning) • [The Hub](#-universal-ai-companion) • [Memory](#-semantic-recall) • [Security](#-security-audit)
 
 </div>
 
@@ -23,12 +23,12 @@
 
 ## ── PHILOSOPHY ────────────────────────────────────────────────────────────
 
-PowershellOps is a professional technical studio for Windows SysOps, designed for specialists who demand privacy, execution speed, and deep system insights. It provides a dense ecosystem of diagnostics, security audits, and network tools that operate entirely within your local perimeter.
+PowershellOps is a professional **Agentic Stack** for Windows, designed for specialists who demand privacy, execution speed, and deep system insights. It transforms the terminal from a command shell into an **Intelligent Companion Hub** that reasons over local context and researches online information entirely within your perimeter.
 
-- **INTELLIGENT TELEMETRY**: High-density system health reporting in a refined ANSI interface.
+- **AGENTIC WORKFLOWS**: Multi-step AI reasoning for system repair and data analysis.
+- **SITUATIONAL AWARENESS**: Automatic injection of time, date, and system load into every AI query.
 - **SECURITY SUBSTRATE**: Local auditing of firewalls, listeners, and persistence vectors.
-- **LOCAL INTELLIGENCE**: Integrated pipeline for local LLMs (Ollama) to perform real-time data analysis.
-- **PORTABLE & CLEAN**: A self-contained module architecture that respects your existing environment.
+- **PORTABLE & CLEAN**: A minimalist "Thin Core" architecture with zero meta-bloat.
 
 ---
 
@@ -44,42 +44,36 @@ irm https://raw.githubusercontent.com/shahriarhaqueabir/PowershellOps/main/insta
 
 ---
 
-## ── INTERFACE ─────────────────────────────────────────────────────────────
+## ── THE COMPANION HUB (`hub`) ──────────────────────────────────────────────
 
-The operational dashboard features a strictly aligned 16-character grid with a professional pastel palette.
+The central "Brain" of your terminal. A single entry point for high-speed operational tasks.
 
-```text
-  ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-  │  Ops : CORE   v11.3   AI: ACTIVE                                                                                  │
-  ├────────────────────┬──────────────────────────────────────────────────────────────────────────────────────────────┤
-  │ • SYSTEM           │ corehealth      sysspec         sysuptime       ramstats        battstatus      gpuview      │
-  │ • SECURITY         │ adminaudit      shieldstatus    fwcheck         bootmap         taskrisk        ghostports   │
-  │ • NETWORK          │ netping         wificheck       peerscheck      dnsbench        netspeed        smbshares    │
-  │ • AI/MEM           │ askai           websearch       aistatus        aiintent        aiprofile       airemember   │
-  │ • RUN              │ dailycheck      sysreview       secaudit        netreview       threathunt      changeaudit  │
-  └────────────────────┴──────────────────────────────────────────────────────────────────────────────────────────────┘
-```
+| Shortcut | Command | Action |
+|:---|:---|:---|
+| **`brief`** | `Get-OpsDailyBrief` | **Daily Executive Report**: News + Health + Security. |
+| **`fix`**   | `Invoke-OpsShortFix`| **Self-Healing**: AI-driven remediation of the last error. |
+| **`stat`**  | `Invoke-OpsShortStat`| **Instant Pulse**: 1-page health/resource snapshot. |
+| **`ask`**   | `Invoke-OpsShortAsk` | **Pipable Research**: Analyze pipeline data with local LLMs. |
+| **`mem`**   | `Invoke-OpsShortMem` | **Vector Storage**: Save personal operational notes/preferences. |
 
 ---
 
 ## ── QUICK REFERENCE ──────────────────────────────────────────────────────
 
-### 🖥️ SYSTEM DIAGNOSTICS
+### 🖥️ SYSTEM DIAGNOSTICS (`stat`)
 | Alias | Description | Technical Metric |
 |:---|:---|:---|
 | `corehealth`| Real-time system health | CPU, RAM, Procs, Handles |
 | `sysspec`   | Hardware specifications | Processor, Cores, GPU |
 | `sysuptime` | System availability | Continuous run-time tracking |
-| `ramstats`  | Physical memory map | Bank labels, Speed, Manufacturer |
 | `diskpressure`| Storage capacity audit | Free space % and volume state |
 
-### 🛡️ SECURITY AUDIT
+### 🛡️ SECURITY AUDIT (`scan`)
 | Alias | Description | Audit Focus |
 |:---|:---|:---|
 | `adminaudit`| Administrator group audit | Access control & membership |
 | `shieldstatus`| Windows Defender state | Endpoint protection health |
 | `fwcheck`   | Firewall & port cross-ref | Rule gap detection |
-| `bootmap`   | Startup persistence | Registry run keys |
 | `threathunt`| Heuristic anomaly triage | Suspicious files & ports |
 
 ### 🌐 NETWORK TRIAGE
@@ -88,30 +82,24 @@ The operational dashboard features a strictly aligned 16-character grid with a p
 | `netping`   | Internet reachability | ICMP latency & state |
 | `wificheck` | WLAN diagnostics | SSID, Signal intensity |
 | `dnsbench`  | Multi-resolver benchmark | Resolution performance |
-| `smbshares` | Network share audit | Exposed directory vectors |
-
-### 🧠 LOCAL INTELLIGENCE
-Powered by **Ollama**. Secure, offline AI for data synthesis and research.
-
-| Alias | Description | Synthesis Level |
-|:---|:---|:---|
-| `askai`    | Direct LLM query | Local reasoning core |
-| `websearch` | Scrape + AI Synthesis | Real-time local research |
-| `airemember`| Local memory storage | Knowledge persistence |
-| `airecall`  | Semantic memory search | Context retrieval |
 
 ---
 
-## ── AUTOMATED WORKFLOWS ──────────────────────────────────────────────────
+## ── ARCHITECTURE ──────────────────────────────────────────────────────────
 
-High-density scored reports combining multi-vector diagnostics into actionable intelligence.
+PowershellOps utilizes a **Hexagonal (Ports & Adapters)** design to ensure maximum portability and low-latency execution.
 
-- **`dailycheck`**: The standard morning triage. Health, disk, network, and event storms.
-- **`sysreview`**: Comprehensive hardware and resource utilization audit.
-- **`secaudit`**: Security hardening and persistence hook verification.
-- **`netreview`**: Advanced network stack and DNS performance diagnostics.
-- **`threathunt`**: Targeted scan for suspicious artifacts and ghost listeners.
-- **`compliancecheck`**: CIS-aligned baseline validation for Windows workstations.
+```mermaid
+graph TD
+    User([User Shortcut]) --> Ports[Public Ports: brief, fix, ask]
+    Ports --> Service[Service Orchestrator: Invoke-OpsCompanion]
+    Service --> Context[Ambient Context: Time, Health, Error]
+    Service --> Adapters{Infrastructure Adapters}
+    Adapters --> Web[Web Search: Scrape + Synthesis]
+    Adapters --> CIM[System: CIM/WMI Diagnostics]
+    Adapters --> AI[Intelligence: Local Ollama LLM]
+    Adapters --> Memory[Memory: Local Vector Store]
+```
 
 ---
 

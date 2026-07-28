@@ -1,6 +1,14 @@
 # ── PUBLIC: SECURITY AUDIT ────────────────────────────────────────────────
 
 function Get-OpsFirewallAudit {
+    <#
+    .SYNOPSIS
+    Cross-references listening ports against firewall inbound allow rules.
+    .OUTPUTS
+    PSCustomObject with Port, PID, Process, and Status.
+    #>
+    [CmdletBinding()]
+    param()
     return Invoke-OpsCachedData -Key 'sys_fwaudit' -ExpirySeconds 60 -ScriptBlock {
         if (-not (Get-Command Get-NetFirewallRule -ErrorAction SilentlyContinue)) {
             return [PSCustomObject]@{ Port = 'ALL'; PID = '0'; Process = 'N/A'; Status = 'NetSecurity Module Missing' }
@@ -23,6 +31,14 @@ function Get-OpsFirewallAudit {
 }
 
 function Get-OpsBootMap {
+    <#
+    .SYNOPSIS
+    Lists registry Run keys for startup persistence entries.
+    .OUTPUTS
+    PSCustomObject with Hive, Name, and Target.
+    #>
+    [CmdletBinding()]
+    param()
     return Invoke-OpsCachedData -Key 'sys_bootmap' -ExpirySeconds 300 -ScriptBlock {
         $paths = @('HKLM:\Software\Microsoft\Windows\CurrentVersion\Run', 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run')
         foreach ($p in $paths) {
@@ -37,6 +53,14 @@ function Get-OpsBootMap {
 }
 
 function Get-OpsScheduledTaskRiskAudit {
+    <#
+    .SYNOPSIS
+    Lists non-Microsoft scheduled tasks that could indicate persistence.
+    .OUTPUTS
+    PSCustomObject with TaskName and Path.
+    #>
+    [CmdletBinding()]
+    param()
     return Invoke-OpsCachedData -Key 'sys_taskaudit' -ExpirySeconds 300 -ScriptBlock {
         if (-not (Get-Command Get-ScheduledTask -ErrorAction SilentlyContinue)) { return @() }
         Get-ScheduledTask |
@@ -46,14 +70,40 @@ function Get-OpsScheduledTaskRiskAudit {
     }
 }
 
-function Get-OpsGhostPortAudit { Get-OpsPortMap | Where-Object { $_.Process -in @('Unknown', 'System Listen Stack') } }
+function Get-OpsGhostPortAudit {
+    <#
+    .SYNOPSIS
+    Returns listening ports with unknown or unidentified processes.
+    .OUTPUTS
+    PSCustomObject with Port, PID, and Process.
+    #>
+    [CmdletBinding()]
+    param()
+    Get-OpsPortMap | Where-Object { $_.Process -in @('Unknown', 'System Listen Stack') }
+}
 
 function Get-OpsSuspiciousProcessAudit {
+    <#
+    .SYNOPSIS
+    Lists processes running from AppData or Temp directories.
+    .OUTPUTS
+    PSCustomObject with Name, Id, Path, CPU, and RAMMB.
+    #>
+    [CmdletBinding()]
+    param()
     Get-Process | Where-Object { $_.Path -and $_.Path -match '(?i)(\\AppData\\|\\Temp\\|\\Windows\\Temp\\)' } |
         Select-Object Name, Id, @{N='Path';E={$_.Path}}, @{N='CPU';E={[Math]::Round($_.CPU, 1)}}, @{N='RAMMB';E={[Math]::Round($_.WorkingSet / 1MB, 1)}}
 }
 
 function Get-OpsEventStormAudit {
+    <#
+    .SYNOPSIS
+    Detects application log event storms in the last 15 minutes.
+    .OUTPUTS
+    PSCustomObject with Count, Name, and Source.
+    #>
+    [CmdletBinding()]
+    param()
     return Invoke-OpsCachedData -Key 'sys_eventstorm' -ExpirySeconds 20 -ScriptBlock {
         try {
             $cutoff = (Get-Date).AddMinutes(-15)
@@ -67,6 +117,14 @@ function Get-OpsEventStormAudit {
 }
 
 function Get-OpsShield {
+    <#
+    .SYNOPSIS
+    Returns Windows Defender antivirus and real-time protection status.
+    .OUTPUTS
+    PSCustomObject with Defender status fields.
+    #>
+    [CmdletBinding()]
+    param()
     if (-not (Get-Command Get-MpComputerStatus -ErrorAction SilentlyContinue)) {
         return [PSCustomObject]@{ Status = 'Defender cmdlets unavailable' }
     }
@@ -75,11 +133,37 @@ function Get-OpsShield {
             @{N='LastQuickScanResult';E={$_.LastQuickScanResult -join ';'}}
 }
 
-function Get-OpsEnvMap { Get-ChildItem Env: | Select-Object Name, Value }
+function Get-OpsEnvMap {
+    <#
+    .SYNOPSIS
+    Returns all environment variables.
+    .OUTPUTS
+    PSCustomObject with Name and Value.
+    #>
+    [CmdletBinding()]
+    param()
+    Get-ChildItem Env: | Select-Object Name, Value
+}
 
-function Get-OpsPathAudit { $env:Path -split ';' | ForEach-Object { [PSCustomObject]@{ Path = $_; Exists = (Test-Path $_) } } }
+function Get-OpsPathAudit {
+    <#
+    .SYNOPSIS
+    Validates each PATH directory for existence.
+    .OUTPUTS
+    PSCustomObject with Path and Exists.
+    #>
+    [CmdletBinding()]
+    param()
+    $env:Path -split ';' | ForEach-Object { [PSCustomObject]@{ Path = $_; Exists = (Test-Path $_) } }
+}
 
 function Protect-OpsSensitiveText {
+    <#
+    .SYNOPSIS
+    Redacts sensitive key-value pairs in text using pattern matching.
+    .OUTPUTS
+    String with sensitive values replaced by <REDACTED>.
+    #>
     [CmdletBinding()]
     param([Parameter(ValueFromPipeline = $true)][AllowNull()]$InputObject)
     process {
@@ -94,6 +178,12 @@ function Protect-OpsSensitiveText {
 }
 
 function Test-OpsPromptInjection {
+    <#
+    .SYNOPSIS
+    Scores text for prompt injection risk using pattern matching and optional AI heuristic.
+    .OUTPUTS
+    Boolean indicating whether the text is suspected injection.
+    #>
     [CmdletBinding()]
     param(
         [AllowNull()][string]$Payload,
@@ -157,6 +247,13 @@ function Test-OpsPromptInjection {
 }
 
 function Get-OpsSourceQualityScore {
+    <#
+    .SYNOPSIS
+    Returns a quality score (0-100) for scraped web content based on length and domain.
+    .OUTPUTS
+    Int32 quality score between 0 and 100.
+    #>
+    [CmdletBinding()]
     param([string]$Url, [AllowNull()][string]$Content)
     if ([string]::IsNullOrWhiteSpace($Content)) { return 0 }
     $score = 50
@@ -167,6 +264,12 @@ function Get-OpsSourceQualityScore {
 }
 
 function Get-OpsAudit {
+    <#
+    .SYNOPSIS
+    Routes to a specific security audit function by type.
+    .OUTPUTS
+    PSCustomObject results from the selected audit function.
+    #>
     [CmdletBinding()]
     param([ValidateSet('Firewall','Boot','ScheduledTask','GhostPort','SuspiciousProcess','EventStorm','Patch','Temp','Clip')][string]$Type = 'Firewall')
     switch ($Type) {
@@ -181,4 +284,3 @@ function Get-OpsAudit {
         'Clip'              { Get-OpsClipCheck }
     }
 }
-

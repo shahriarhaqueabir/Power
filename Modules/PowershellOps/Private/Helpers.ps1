@@ -67,6 +67,8 @@ class OpsMemoryEntry {
     [string] $Created
     [string] $Confidence
     [bool]   $Pinned
+    [float[]]$Embedding
+    [string] $Path
 
     OpsMemoryEntry() {}
 
@@ -79,6 +81,8 @@ class OpsMemoryEntry {
         $this.Created    = $map.Created
         $this.Confidence = $map.Confidence
         $this.Pinned     = [bool]$map.Pinned
+        if ($map.Embedding) { $this.Embedding = [float[]]$map.Embedding }
+        if ($map.Path) { $this.Path = $map.Path }
     }
 }
 
@@ -392,5 +396,26 @@ function Get-OpsReportPath {
     param([string]$Ext = 'md')
     if (-not (Test-Path $script:OpsReportRoot)) { $null = New-Item -Path $script:OpsReportRoot -ItemType Directory -Force }
     return Join-Path $script:OpsReportRoot ("Opsreport-{0}.{1}" -f (Get-Date -Format 'yyyyMMdd-HHmmss'), $Ext)
+}
+
+function Get-OpsCapabilitiesMap {
+    <#
+    .SYNOPSIS
+    Returns a static map of core aliases and their high-level functionality for AI context.
+    #>
+    return @"
+Available PowershellOps Tools:
+- brief: Daily executive report (Top news + System Health + Security Verdict).
+- fix: AI-driven terminal error remediation (analyzes last error).
+- hub: Central companion dispatcher for all AI/research tasks.
+- ask <query>: All-purpose pipable research and analysis tool.
+- stat: Instant workstation health snapshot (CPU, RAM, Disk, Temp).
+- mem <note>: Save personal operational notes/preferences to vector memory.
+- web <query>: Deep online research across multiple search engines.
+- scan: AI-driven security audit and threat hunt.
+- proj: View or set the current active project root.
+- secaudit: Full security compliance and firewall audit.
+- netreview: Network diagnostics and link speed triage.
+"@
 }
 

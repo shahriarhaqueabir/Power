@@ -1,6 +1,12 @@
 # ── PUBLIC: PROFILE & INIT ─────────────────────────────────────────────────
 
 function Install-OpsPrerequisite {
+    <#
+    .SYNOPSIS
+    Installs required PowerShell modules with publisher trust verification.
+    .OUTPUTS
+    PSCustomObject with Module, Status, Author, and CompanyName properties.
+    #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [string[]]$ModuleName = $script:OpsRequiredModules
@@ -44,6 +50,12 @@ function Install-OpsPrerequisite {
 }
 
 function Import-OpsPrerequisite {
+    <#
+    .SYNOPSIS
+    Imports required PowerShell modules and verifies publisher trust.
+    .OUTPUTS
+    PSCustomObject with Module, Status, Message, Author, and CompanyName properties.
+    #>
     [CmdletBinding()]
     param(
         [string[]]$ModuleName = $script:OpsRequiredModules,
@@ -76,6 +88,12 @@ function Import-OpsPrerequisite {
 }
 
 function Set-OpsReadLine {
+    <#
+    .SYNOPSIS
+    Configures PSReadLine prediction source and ListView style.
+    .OUTPUTS
+    None.
+    #>
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
     if (-not (Get-Command Set-PSReadLineOption -ErrorAction SilentlyContinue)) { return }
@@ -88,6 +106,13 @@ function Set-OpsReadLine {
 }
 
 function Get-OpsPromptText {
+    <#
+    .SYNOPSIS
+    Generates the custom PowerShell prompt with path, time, and git branch segments.
+    .OUTPUTS
+    String containing the formatted prompt with ANSI escape codes.
+    #>
+    [CmdletBinding()]
     param([bool]$LastSuccess = $true)
     $esc = [char]27
     $reset = "${esc}[0m"
@@ -100,6 +125,12 @@ function Get-OpsPromptText {
 }
 
 function Get-OpsPromptGitSegment {
+    <#
+    .SYNOPSIS
+    Returns the git branch segment for the custom prompt using filesystem caching.
+    .OUTPUTS
+    String containing the ANSI-formatted git branch name, or empty string if not in a repo.
+    #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', 'Used in cached scriptblock via closure')]
     [CmdletBinding()]
     param([string]$Reset)
@@ -141,6 +172,12 @@ function Get-OpsPromptGitSegment {
 }
 
 function Set-OpsPrompt {
+    <#
+    .SYNOPSIS
+    Sets the global prompt function to use Ops custom prompt segments.
+    .OUTPUTS
+    None.
+    #>
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
     if ($PSCmdlet.ShouldProcess('global:prompt', 'Set custom prompt function')) {
@@ -151,6 +188,12 @@ function Set-OpsPrompt {
 }
 
 function Set-OpsAliases {
+    <#
+    .SYNOPSIS
+    Registers all Ops alias shortcuts in the global scope.
+    .OUTPUTS
+    None. Creates global aliases for all Ops utility functions.
+    #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', 'Intentionally sets all aliases in one call')]
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
@@ -245,7 +288,14 @@ function Set-OpsAliases {
         @("netreview", "Invoke-OpsNetworkDiagnostics"),
         @("threathunt", "Invoke-OpsThreatHunt"),
         @("changeaudit", "Invoke-OpsChangeAudit"),
-        @("compliancecheck", "Invoke-OpsComplianceCheck")
+        @("compliancecheck", "Invoke-OpsComplianceCheck"),
+        @("hub", "Invoke-OpsCompanion"),
+        @("ask", "Invoke-OpsShortAsk"),
+        @("fix", "Invoke-OpsShortFix"),
+        @("stat", "Invoke-OpsShortStat"),
+        @("mem", "Invoke-OpsShortMem"),
+        @("news", "Get-OpsDailyBrief"),
+        @("brief", "Get-OpsDailyBrief")
     )
     foreach ($m in $mappings) {
         Set-Alias -Scope Global -Name $m[0] -Value $m[1] -Force
@@ -253,6 +303,12 @@ function Set-OpsAliases {
 }
 
 function Initialize-OpsProfile {
+    <#
+    .SYNOPSIS
+    Initializes the Ops module environment, imports prerequisites, and configures the shell.
+    .OUTPUTS
+    None. Sets up the Ops profile including aliases, prompt, and readline settings.
+    #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', 'Intentional user-facing config')]
     [CmdletBinding(SupportsShouldProcess=$true)]
     param(
@@ -302,6 +358,12 @@ function Initialize-OpsProfile {
 }
 
 function Update-OpsModule {
+    <#
+    .SYNOPSIS
+    Pulls the latest code from git and reloads the module.
+    .OUTPUTS
+    None. Removes and re-imports the PowershellOps module from the repository.
+    #>
     [CmdletBinding(SupportsShouldProcess)]
     param()
     if ($PSCmdlet.ShouldProcess('PowershellOps', 'Pull latest and reload')) {
@@ -331,6 +393,12 @@ function Update-OpsModule {
 }
 
 function Update-OpsProfile {
+    <#
+    .SYNOPSIS
+    Re-dot-sources the current PowerShell profile to pick up changes.
+    .OUTPUTS
+    None. Reloads the current user's PowerShell profile script.
+    #>
     [CmdletBinding(SupportsShouldProcess=$true)]
     param()
     if (-not $PSCmdlet.ShouldProcess('$PROFILE', 'Dot-source profile')) { return }
@@ -356,6 +424,14 @@ function Update-OpsProfile {
 }
 
 function Show-OpsManual {
+    <#
+    .SYNOPSIS
+    Opens the MANUAL.md reference file in the default editor.
+    .OUTPUTS
+    None.
+    #>
+    [CmdletBinding()]
+    param()
     $manualPath = Join-Path $script:OpsWorkspaceRoot 'MANUAL.md'
     if (Test-Path $manualPath) {
         Write-Host "  Opening MANUAL.md..." -ForegroundColor Cyan
@@ -365,9 +441,25 @@ function Show-OpsManual {
     }
 }
 
-function Invoke-ExplorerHere { Start-Process explorer.exe -ArgumentList (Get-Location).Path }
+function Invoke-ExplorerHere {
+    <#
+    .SYNOPSIS
+    Opens File Explorer at the current directory.
+    .OUTPUTS
+    None.
+    #>
+    [CmdletBinding()]
+    param()
+    Start-Process explorer.exe -ArgumentList (Get-Location).Path
+}
 
 function Get-OpsProject {
+    <#
+    .SYNOPSIS
+    Returns the current Ops project root path.
+    .OUTPUTS
+    PSCustomObject with a CurrentRoot property containing the project root path.
+    #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', 'Intentional user-facing config')]
     [CmdletBinding()]
     param()
@@ -375,6 +467,12 @@ function Get-OpsProject {
 }
 
 function Invoke-OpsProject {
+    <#
+    .SYNOPSIS
+    Sets the global Ops project root path.
+    .OUTPUTS
+    PSCustomObject with a CurrentRoot property containing the newly set project root path.
+    #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', 'Intentional user-facing config')]
     [CmdletBinding(SupportsShouldProcess=$true)]
     param([string]$Path = $script:OpsDefaultProjectRoot)
@@ -385,6 +483,12 @@ function Invoke-OpsProject {
 }
 
 function Get-OpsEnv {
+    <#
+    .SYNOPSIS
+    Routes to a specific environment diagnostic function by type.
+    .OUTPUTS
+    PSCustomObject(s) from the corresponding diagnostic function.
+    #>
     [CmdletBinding()]
     param([ValidateSet('Env','Path','App','Patch','Driver','Admin','Hypervisor','Power','License')][string]$Type = 'Env')
     switch ($Type) {
@@ -399,6 +503,5 @@ function Get-OpsEnv {
         'License'    { Get-OpsLicense }
     }
 }
-
 
 

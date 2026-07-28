@@ -1,6 +1,12 @@
 # ── PUBLIC: ONBOARDING ─────────────────────────────────────────────────────
 
 function Get-OpsOnboardContext {
+    <#
+    .SYNOPSIS
+    Resolves the full onboarding context including project root, model catalog, and model file path.
+    .OUTPUTS
+    [PSCustomObject] containing resolved onboarding context.
+    #>
     [CmdletBinding()]
     param(
         [string]$ProjectRoot = $script:OpsDefaultProjectRoot,
@@ -29,6 +35,12 @@ function Get-OpsOnboardContext {
 }
 
 function Save-OpsOnboardConfiguration {
+    <#
+    .SYNOPSIS
+    Persists onboarding configuration to the ops-settings.json file.
+    .OUTPUTS
+    [PSCustomObject] with the written configuration values.
+    #>
     [CmdletBinding()]
     param(
         [string]$ProjectRoot,
@@ -73,6 +85,12 @@ function Save-OpsOnboardConfiguration {
 }
 
 function New-OpsOnboardModelfile {
+    <#
+    .SYNOPSIS
+    Generates a Modelfile from the template with the selected model.
+    .OUTPUTS
+    [PSCustomObject] indicating the created Modelfile details.
+    #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)][string]$SelectedModel,
@@ -104,6 +122,12 @@ function New-OpsOnboardModelfile {
 }
 
 function New-OpsOnboardStepPlan {
+    <#
+    .SYNOPSIS
+    Returns a structured plan of onboarding steps with status and commands.
+    .OUTPUTS
+    Array of [PSCustomObject] representing each onboarding step.
+    #>
     [CmdletBinding()]
     param([Parameter(Mandatory = $true)][pscustomobject]$Context)
 
@@ -166,6 +190,12 @@ function New-OpsOnboardStepPlan {
 }
 
 function Invoke-OpsOnboardStep1 {
+    <#
+    .SYNOPSIS
+    Sets the project root in the onboarding configuration.
+    .OUTPUTS
+    [PSCustomObject] with the applied project root.
+    #>
     [CmdletBinding()]
     param([string]$ProjectRoot = $script:OpsDefaultProjectRoot)
 
@@ -181,6 +211,12 @@ function Invoke-OpsOnboardStep1 {
 }
 
 function Invoke-OpsOnboardStep2 {
+    <#
+    .SYNOPSIS
+    Sets the memory root directory and saves it to configuration.
+    .OUTPUTS
+    [PSCustomObject] with the applied memory root.
+    #>
     [CmdletBinding()]
     param(
         [string]$ProjectRoot = $script:OpsDefaultProjectRoot,
@@ -202,6 +238,12 @@ function Invoke-OpsOnboardStep2 {
 }
 
 function Invoke-OpsOnboardStep3 {
+    <#
+    .SYNOPSIS
+    Tests Ollama endpoint connectivity and discovers available models.
+    .OUTPUTS
+    [PSCustomObject] with model catalog details.
+    #>
     [CmdletBinding()]
     param([string]$AIEndpoint = $script:OpsDefaultAIEndpoint)
 
@@ -221,6 +263,12 @@ function Invoke-OpsOnboardStep3 {
 }
 
 function Invoke-OpsOnboardStep4 {
+    <#
+    .SYNOPSIS
+    Selects the AI model from the available catalog and saves it.
+    .OUTPUTS
+    [PSCustomObject] with the selected model and catalog info.
+    #>
     [CmdletBinding()]
     param(
         [string]$AIEndpoint = $script:OpsDefaultAIEndpoint,
@@ -244,6 +292,12 @@ function Invoke-OpsOnboardStep4 {
 }
 
 function Invoke-OpsOnboardStep5 {
+    <#
+    .SYNOPSIS
+    Generates the Ollama Modelfile from the bundled template.
+    .OUTPUTS
+    [PSCustomObject] with the generated Modelfile path and status.
+    #>
     [CmdletBinding()]
     param(
         [string]$ProjectRoot = $script:OpsDefaultProjectRoot,
@@ -270,7 +324,13 @@ function Invoke-OpsOnboardStep5 {
 }
 
 function Invoke-OpsOnboardStep6 {
-    [CmdletBinding()]
+    <#
+    .SYNOPSIS
+    Creates the Ollama model by running ollama create against the generated Modelfile.
+    .OUTPUTS
+    [PSCustomObject] with the model creation result.
+    #>
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param(
         [string]$ModelName = 'powershell-ops',
         [string]$ModelFilePath = (Join-Path $script:OpsConfigRoot 'OpsIntelligence.generated.Modelfile'),
@@ -285,7 +345,9 @@ function Invoke-OpsOnboardStep6 {
         throw "Modelfile not found at: $ModelFilePath"
     }
 
-    & ollama create $ModelName -f $ModelFilePath
+    if ($PSCmdlet.ShouldProcess("Ollama model '$ModelName'", 'Create from Modelfile')) {
+        & ollama create $ModelName -f $ModelFilePath
+    }
     Save-OpsOnboardConfiguration -AIEndpoint $AIEndpoint -ModelFilePath $ModelFilePath -SetupCompleted $true | Out-Null
 
     [PSCustomObject]@{
@@ -299,6 +361,12 @@ function Invoke-OpsOnboardStep6 {
 }
 
 function Invoke-OpsOnboard {
+    <#
+    .SYNOPSIS
+    Runs the full onboarding workflow with context resolution, step planning, and optional apply.
+    .OUTPUTS
+    [PSCustomObject] with the full onboarding context and step plan.
+    #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', 'Intentional user-facing config')]
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(

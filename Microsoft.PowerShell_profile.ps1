@@ -4,7 +4,7 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # Path Resolution
-$OpsProfileRoot = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $PROFILE.CurrentUserCurrentHost }
+$OpsProfileRoot = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent ($PROFILE.CurrentUserCurrentHost ?? (Get-Location).Path) }
 $OpsModuleManifest = Join-Path $OpsProfileRoot 'Modules\PowershellOps\PowershellOps.psd1'
 
 # Module Verification

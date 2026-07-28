@@ -1,42 +1,63 @@
-# .gitignore — PowershellOps Hybrid PowerShell Profile
+# .gitignore — PowershellOps
 
 # ─────────────────────────────────────────────
-# AUTO-GENERATED REPORTS & TEST ARTEFACTS
+# AGENT INTERNAL STATE (Private reasoning/plans)
 # ─────────────────────────────────────────────
+.memory/
+plans/
+docs/superpowers/
+
+# ─────────────────────────────────────────────
+# LOCAL DATA & USER CONFIG
+# ─────────────────────────────────────────────
+Memory/
 Reports/
+Config/
 testResults.xml
 ops-test-results.xml
+.Ops_first_run
 
 # ─────────────────────────────────────────────
-# LOCAL CONTEXT & MEMORY
+# VECTORS & MODELS (Stored locally)
 # ─────────────────────────────────────────────
-docs/
-Memory/
-AI/TestMemory/
+# Keep modelfiles/ folder but ignore specific local bin/weights if any
+# modelfiles/
+
+# ─────────────────────────────────────────────
+# IDE & OS METADATA
+# ─────────────────────────────────────────────
 .idea/
 .vscode/
+*.swp
+*.swo
+*~
+Thumbs.db
+Desktop.ini
+.DS_Store
 
 # ─────────────────────────────────────────────
-# POWERSHELL MODULE HELP CACHE
+# POWERSHELL / BUILD ARTIFACTS
 # ─────────────────────────────────────────────
 Help/
-Help/**/*.xml
-Help/**/*.zip
+Scripts/dev/
+BackupOriginal/
+__final_check.ps1
+*.backup.ps1
+*.bak
+*.old
+*.tmp
+*.temp
+*.log
 
 # ─────────────────────────────────────────────
-# INSTALLED SCRIPT METADATA (PSResourceGet)
-# ─────────────────────────────────────────────
-Scripts/InstalledScriptInfos/
-
-# ─────────────────────────────────────────────
-# THIRD-PARTY / VENDORED MODULES
-# These should be installed via Install-OpsPrerequisite
+# MODULE DEPENDENCIES
+# Use Install-OpsPrerequisite to populate Modules/
 # ─────────────────────────────────────────────
 Modules/*/
 !Modules/PowershellOps/
 
 # ─────────────────────────────────────────────
-# SECRETS & CREDENTIALS
+# SECRETS (STRICT PROHIBITION)
 # ─────────────────────────────────────────────
 *.key
 *.pem
@@ -49,27 +70,7 @@ secrets.*
 credentials.*
 
 # ─────────────────────────────────────────────
-# BACKUP, LEGACY & DEV ARTEFACTS
+# WHITELIST (Explicitly tracked assets)
 # ─────────────────────────────────────────────
-BackupOriginal/
-Scripts/dev/
-__final_check.ps1
-*.backup.ps1
-*.bak
-*.old
-*.tmp
-*.temp
-*.log
-
-# ─────────────────────────────────────────────
-# EDITOR & OS NOISE
-# ─────────────────────────────────────────────
-*.code-workspace
-*.swp
-*.swo
-*~
-Thumbs.db
-Desktop.ini
-.DS_Store
-nul
-
+!Modules/PowershellOps/Patterns/
+!docs/*.md

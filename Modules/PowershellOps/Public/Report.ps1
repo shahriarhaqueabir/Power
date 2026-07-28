@@ -1,6 +1,13 @@
 # ── PUBLIC: REPORT & DASHBOARD ─────────────────────────────────────────────
 
 function ConvertTo-OpsMarkdownTable {
+    <#
+    .SYNOPSIS
+        Converts an array of objects into a formatted Markdown table with auto-sized columns.
+    .OUTPUTS
+        [string] A single Markdown table string with header, separator, and data rows.
+    #>
+    [CmdletBinding()]
     param([object[]]$InputObject, [string]$Section = '')
     $rows = @($InputObject | Where-Object { $null -ne $_ }); if (-not $rows) { return '_No transactional metrics encountered._' }
     $props = @($rows[0].PSObject.Properties.Name)
@@ -19,6 +26,13 @@ function ConvertTo-OpsMarkdownTable {
 }
 
 function ConvertTo-OpsReportMarkdown {
+    <#
+    .SYNOPSIS
+        Converts a full report hashtable into a Markdown document with sections.
+    .OUTPUTS
+        [string] A complete Markdown document string with a heading and one section per report key.
+    #>
+    [CmdletBinding()]
     param($Report)
     $lines = [System.Collections.Generic.List[string]]::new(); $lines.Add('# PowershellOps Hybrid Structural Triage Report'); $lines.Add("Generated: $($Report.Generated)`n")
     foreach ($section in @('AI', 'Disk', 'Resources', 'Ports', 'FirewallGaps', 'Startup', 'ScheduledTaskRisks', 'EventStorms')) {
@@ -28,6 +42,12 @@ function ConvertTo-OpsReportMarkdown {
 }
 
 function Write-OpsReportTable {
+    <#
+    .SYNOPSIS
+        Renders a formatted console table with ANSI-colored headers and cells.
+    .OUTPUTS
+        None. Writes formatted output directly to the host console.
+    #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', 'Intentional console table rendering')]
     [CmdletBinding()]
     param([string]$Title, [hashtable[]]$Columns, [object[]]$InputObject = @(), [string]$Icon = '•', [string]$AnsiColor = '153', [int]$MaxRows = 0)
@@ -48,6 +68,12 @@ function Write-OpsReportTable {
 }
 
 function New-OpsReport {
+    <#
+    .SYNOPSIS
+        Generates a full system report in Console, Markdown, or JSON format.
+    .OUTPUTS
+        [string] The report content when Format is Markdown or Json; otherwise writes to a file and renders tables to the console.
+    #>
     [CmdletBinding(SupportsShouldProcess=$true)] param([ValidateSet('Console', 'Markdown', 'Json')][string]$Format = 'Console', [string]$Path)
     $prev = $script:OpsSuppressHeaders; $script:OpsSuppressHeaders = $true
     try {
@@ -86,6 +112,12 @@ function New-OpsReport {
 }
 
 function Show-OpsDashboard {
+    <#
+    .SYNOPSIS
+        Renders the interactive terminal dashboard with category grids and alias references.
+    .OUTPUTS
+        None. Draws the full dashboard layout to the host console.
+    #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', 'Intentional user-facing config')]
     [CmdletBinding()]
     param()
@@ -117,8 +149,8 @@ function Show-OpsDashboard {
         @{ Icon = '󰒓'; Name = 'SYSTEM';      Bg = $c.Sys; Cmds = @('corehealth','sysspec','sysuptime','ramstats','battstatus','gpuview','powertriage','vmcheck','liccheck','diskpressure','tempcheck','clipcheck','smartstatus','resourcemap','portmap','sysdiag') }
         @{ Icon = '󰒕'; Name = 'SECURITY';    Bg = $c.Sec; Cmds = @('adminaudit','shieldstatus','fwcheck','bootmap','taskrisk','ghostports','susprocs','eventstorm','certaudit','dumpmap','filecheck','shortcutcheck','lockcheck','sparsecheck','compresscheck','patchhistory','driveraudit','recentfiles','secretmask','auditdiag') }
         @{ Icon = '󰒢'; Name = 'NETWORK';     Bg = $c.Net; Cmds = @('netping','wificheck','peerscheck','dnsbench','netspeed','smbshares','hostscheck','dnsmap','nettriage','netview') }
-        @{ Icon = '󰒙'; Name = 'AI/MEM';      Bg = $c.Aim; Cmds = @('askai','websearch','aistatus','aiintent','aiprofile','sourcequality','safetycheck','airemember','airecall','memorymap','memoryread','memoryfile') }
-        @{ Icon = '󰒖'; Name = 'RUN';         Bg = $c.Run; Cmds = @('dailycheck','sysreview','secaudit','netreview','threathunt','changeaudit','compliancecheck','fullreport') }
+        @{ Icon = '󰒙'; Name = 'AI/MEM';      Bg = $c.Aim; Cmds = @('ask','fix','hub','brief','websearch','mem','airecall','aistatus','aiintent','aiprofile','memorymap','memoryfile') }
+        @{ Icon = '󰒖'; Name = 'RUN';         Bg = $c.Run; Cmds = @('stat','dailycheck','sysreview','secaudit','netreview','threathunt','changeaudit','compliancecheck','fullreport') }
         @{ Icon = '󰆧'; Name = 'ENVIRONMENT'; Bg = $c.Env; Cmds = @('envmap','pathaudit','applist','apploc','envdiag') }
         @{ Icon = '󰅟'; Name = 'CORE';        Bg = $c.Cfg; Cmds = @('projview','projset','openhere','cached','corecache','opsonboard','coreindex','watchindex','corereload','coreinit','coremanual') }
     )
@@ -200,11 +232,15 @@ function Show-OpsDashboard {
 }
 
 function Watch-OpsDashboard {
+    <#
+    .SYNOPSIS
+        Continuously refreshes the dashboard at a specified interval.
+    .OUTPUTS
+        None. Redraws the dashboard in a loop until interrupted.
+    #>
     [CmdletBinding()]
     param([int]$IntervalSeconds = 2)
     if (-not (Test-OpsInteractiveSession)) { Write-Warning "Dashboard requires an interactive terminal session."; return }
     Write-Information "  [Watch] Dashboard live refresh every ${IntervalSeconds}s. Press Ctrl+C to exit." -InformationAction Continue
     while ($true) { Clear-Host; Show-OpsDashboard; Start-Sleep -Seconds $IntervalSeconds }
 }
-
-

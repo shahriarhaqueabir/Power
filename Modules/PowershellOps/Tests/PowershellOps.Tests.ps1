@@ -340,7 +340,7 @@ Describe 'AI functions' {
     }
 
     It 'Get-OpsSourceQualityScore returns score' {
-        Get-OpsSourceQualityScore -Url 'https://example.gov' -Content 'A' * 1000 | Should -BeGreaterThan 60
+        Get-OpsSourceQualityScore -Url 'https://example.gov' -Content ('A' * 1000) | Should -BeGreaterThan 60
         Get-OpsSourceQualityScore -Url 'https://example.com' -Content '' | Should -Be 0
     }
 

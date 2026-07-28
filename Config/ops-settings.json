@@ -1,9 +1,0 @@
-{
-  "ProjectRoot": "E:\\Projects\\projectx\\powershellOps",
-  "MemoryRoot": "E:\\Projects\\projectx\\powershellOps\\Memory",
-  "AIEndpoint": "http://127.0.0.1:11434",
-  "AIModel": "OpsPowershell",
-  "ModelFile": null,
-  "SetupCompleted": false,
-  "LastUpdated": "2026-07-16T14:20:48.3940082+02:00"
-}

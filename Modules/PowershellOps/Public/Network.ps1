@@ -1,6 +1,12 @@
 # ── PUBLIC: NETWORK FUNCTIONS ──────────────────────────────────────────────
 
 function Get-OpsNetCheck {
+    <#
+    .SYNOPSIS
+    Tests internet connectivity by pinging 1.1.1.1.
+    .OUTPUTS
+    PSCustomObject with Internet boolean.
+    #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingComputerNameHardcoded', '')]
     [CmdletBinding()]
     param()
@@ -8,6 +14,14 @@ function Get-OpsNetCheck {
 }
 
 function Get-OpsWifi {
+    <#
+    .SYNOPSIS
+    Returns Wi-Fi SSID and signal strength percentage.
+    .OUTPUTS
+    PSCustomObject with SSID and SignalPercent.
+    #>
+    [CmdletBinding()]
+    param()
     $raw = netsh wlan show interfaces 2>$null | Out-String
     if (-not $raw) { return [PSCustomObject]@{ SSID = 'N/A'; Signal = 'N/A' } }
     $ssid = if ($raw -match 'SSID\s+:\s+(.+)') { $matches[1].Trim() } else { 'Disconnected' }
@@ -16,6 +30,14 @@ function Get-OpsWifi {
 }
 
 function Get-OpsEstablished {
+    <#
+    .SYNOPSIS
+    Returns established TCP connections with remote address and process name.
+    .OUTPUTS
+    PSCustomObject with LocalPort, RemotePort, RemoteAddress, ProcessName, and State.
+    #>
+    [CmdletBinding()]
+    param()
     if (-not (Get-Command Get-NetTCPConnection -ErrorAction SilentlyContinue)) {
         return [PSCustomObject]@{ Connections = 'N/A - NetTCPConnection cmdlet unavailable' }
     }
@@ -25,6 +47,14 @@ function Get-OpsEstablished {
 }
 
 function Get-OpsDnsBench {
+    <#
+    .SYNOPSIS
+    Benchmarks DNS resolver response times for Cloudflare, Google, and Quad9.
+    .OUTPUTS
+    PSCustomObject with Resolver, Name, and SpeedMS.
+    #>
+    [CmdletBinding()]
+    param()
     $resolvers = [ordered]@{ '1.1.1.1' = 'Cloudflare'; '8.8.8.8' = 'Google'; '9.9.9.9' = 'Quad9' }
     foreach ($server in $resolvers.Keys) {
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
@@ -39,6 +69,14 @@ function Get-OpsDnsBench {
 }
 
 function Get-OpsDnsCache {
+    <#
+    .SYNOPSIS
+    Returns DNS client cache entries sorted by TTL.
+    .OUTPUTS
+    PSCustomObject with Entry, Type, TimeToLive, and DataLength.
+    #>
+    [CmdletBinding()]
+    param()
     if (-not (Get-Command Get-DnsClientCache -ErrorAction SilentlyContinue)) {
         return [PSCustomObject]@{ Entry = 'N/A'; Status = 'Cmdlet unavailable' }
     }
@@ -48,6 +86,14 @@ function Get-OpsDnsCache {
 }
 
 function Get-OpsLinkSpeed {
+    <#
+    .SYNOPSIS
+    Returns network adapter link speed and MAC address.
+    .OUTPUTS
+    PSCustomObject with Name, LinkSpeed, InterfaceDescription, and MacAddress.
+    #>
+    [CmdletBinding()]
+    param()
     if (-not (Get-Command Get-NetAdapter -ErrorAction SilentlyContinue)) {
         return [PSCustomObject]@{ Name = 'N/A'; LinkSpeed = 'N/A' }
     }
@@ -55,9 +101,27 @@ function Get-OpsLinkSpeed {
         Select-Object Name, @{N='LinkSpeed';E={$_.LinkSpeed}}, InterfaceDescription, MacAddress
 }
 
-function Get-OpsShare { Get-CimInstance Win32_Share | Select-Object Name, Path, Description }
+function Get-OpsShare {
+    <#
+    .SYNOPSIS
+    Returns SMB share names, paths, and descriptions.
+    .OUTPUTS
+    PSCustomObject with Name, Path, and Description.
+    #>
+    [CmdletBinding()]
+    param()
+    Get-CimInstance Win32_Share | Select-Object Name, Path, Description
+}
 
 function Get-OpsHostsCheck {
+    <#
+    .SYNOPSIS
+    Parses the hosts file for custom IP-to-hostname mappings.
+    .OUTPUTS
+    PSCustomObject with IP and Hostname.
+    #>
+    [CmdletBinding()]
+    param()
     Get-Content "$env:windir\system32\drivers\etc\hosts" -ErrorAction SilentlyContinue |
         Where-Object { $_ -match '^\s*[^#]' -and $_ -match '\S' } |
         ForEach-Object {
@@ -66,9 +130,25 @@ function Get-OpsHostsCheck {
         }
 }
 
-function Get-OpsNetworkTriage { Get-CimInstance Win32_NetworkAdapterConfiguration -Filter "IPEnabled=True" | Select-Object Description, IPAddress, MACAddress }
+function Get-OpsNetworkTriage {
+    <#
+    .SYNOPSIS
+    Returns network adapter IP addresses and MAC addresses.
+    .OUTPUTS
+    PSCustomObject with Description, IPAddress, and MACAddress.
+    #>
+    [CmdletBinding()]
+    param()
+    Get-CimInstance Win32_NetworkAdapterConfiguration -Filter "IPEnabled=True" | Select-Object Description, IPAddress, MACAddress
+}
 
 function Get-OpsNetwork {
+    <#
+    .SYNOPSIS
+    Routes to a specific network diagnostic function by type.
+    .OUTPUTS
+    PSCustomObject from the selected diagnostic sub-function.
+    #>
     [CmdletBinding()]
     param([ValidateSet('NetCheck','Wifi','DnsBench','LinkSpeed','Share','HostsCheck','DnsCache','Triage')][string]$Type = 'NetCheck')
     switch ($Type) {
@@ -84,6 +164,13 @@ function Get-OpsNetwork {
 }
 
 function Resolve-OpsDuckDuckGoHref {
+    <#
+    .SYNOPSIS
+    Extracts the target URL from a DuckDuckGo redirect href.
+    .OUTPUTS
+    String URL or null.
+    #>
+    [CmdletBinding()]
     param([string]$Href)
     if (-not $Href) { return $null }
     if ($Href -match 'uddg=([^&]+)') { return [Uri]::UnescapeDataString($matches[1]) }
@@ -93,6 +180,12 @@ function Resolve-OpsDuckDuckGoHref {
 }
 
 function Invoke-OpsSearch {
+    <#
+    .SYNOPSIS
+    Searches the web using Google, DuckDuckGo, GitHub, StackOverflow, or Bing with optional AI synthesis.
+    .OUTPUTS
+    Search results or AI-synthesized report.
+    #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', 'Intentional rate-limiting state')]
     [CmdletBinding()]
     param(
@@ -152,9 +245,11 @@ function Invoke-OpsSearch {
         $context = "Search Query: $jq`n`n"
         $read = 0
         $targetCount = if ($Sources -gt 0) { $Sources } elseif ($Deep) { 10 } else { 4 }
+        $progressId = Get-Random -Minimum 1 -Maximum 9999
 
         foreach ($u in $targetUrls) {
             if ($read -ge $targetCount) { break }
+            Write-Progress -Id $progressId -Activity "Web Search: $jq" -Status "Reading $read/$targetCount sources" -PercentComplete (($read / [Math]::Max(1, $targetCount)) * 100)
             Write-OpsHeader "  [Read] Processing structural node: $u" DarkGray
 
             $page = $null
@@ -198,6 +293,8 @@ function Invoke-OpsSearch {
             Start-Sleep -Milliseconds 400
         }
 
+        Write-Progress -Id $progressId -Activity "Web Search: $jq" -Completed
+
         if ($DryRun) {
             Write-OpsHeader "  [Dry-Run] Target URLs to be scraped:" Yellow
             $targetUrls | Select-Object -First $targetCount | ForEach-Object { Write-Host "    - $_" -ForegroundColor DarkGray }
@@ -230,5 +327,3 @@ function Invoke-OpsSearch {
             $context | Invoke-OpsAI -Instruction $Instruction
         } catch { Start-Process $urls[$Engine] }
 }
-
-
