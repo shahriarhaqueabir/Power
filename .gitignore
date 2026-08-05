@@ -74,3 +74,4 @@ credentials.*
 # ─────────────────────────────────────────────
 !Modules/PowershellOps/Patterns/
 !docs/*.md
+.github/AGENTS.md
