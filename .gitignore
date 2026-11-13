@@ -75,3 +75,8 @@ credentials.*
 !Modules/PowershellOps/Patterns/
 !docs/*.md
 .github/AGENTS.md
+
+# ─────────────────────────────────────────────
+# PLAYBOOK (teaching material, kept local/private)
+# ─────────────────────────────────────────────
+docs/playbook*.md

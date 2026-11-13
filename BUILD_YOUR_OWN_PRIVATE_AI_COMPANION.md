@@ -84,9 +84,9 @@ Set-Location .\PowershellOps
 Create the basic folders:
 
 ```powershell
-New-Item -ItemType Directory -Path .\Modules\PowerShellOps\Public -Force
-New-Item -ItemType Directory -Path .\Modules\PowerShellOps\Private -Force
-New-Item -ItemType Directory -Path .\Modules\PowerShellOps\Tests -Force
+New-Item -ItemType Directory -Path .\Modules\PowershellOps\Public -Force
+New-Item -ItemType Directory -Path .\Modules\PowershellOps\Private -Force
+New-Item -ItemType Directory -Path .\Modules\PowershellOps\Tests -Force
 New-Item -ItemType Directory -Path .\Memory -Force
 ```
 
@@ -95,11 +95,11 @@ Your folder structure should look like this:
 ```text
 PowershellOps/
 ├── Modules/
-│   └── PowerShellOps/
+│   └── PowershellOps/
 │       ├── Public/
 │       ├── Private/
 │       ├── Tests/
-│       └── PowerShellOps.psm1
+│       └── PowershellOps.psm1
 ├── Memory/
 └── README.md
 ```
@@ -111,7 +111,7 @@ PowershellOps/
 Create the main module file:
 
 ```powershell
-New-Item -ItemType File -Path .\Modules\PowerShellOps\PowerShellOps.psm1 -Force
+New-Item -ItemType File -Path .\Modules\PowershellOps\PowershellOps.psm1 -Force
 ```
 
 Open the file and add the following:
@@ -140,7 +140,7 @@ This file loads all of your public and private scripts automatically.
 Create the first public script:
 
 ```powershell
-New-Item -ItemType File -Path .\Modules\PowerShellOps\Public\AI.ps1 -Force
+New-Item -ItemType File -Path .\Modules\PowershellOps\Public\AI.ps1 -Force
 ```
 
 Add the following implementation:
@@ -194,7 +194,7 @@ This becomes the foundation of your AI layer.
 Create the system script:
 
 ```powershell
-New-Item -ItemType File -Path .\Modules\PowerShellOps\Public\System.ps1 -Force
+New-Item -ItemType File -Path .\Modules\PowershellOps\Public\System.ps1 -Force
 ```
 
 Add a basic health collector:
@@ -250,7 +250,7 @@ That is the critical bridge between your terminal environment and your AI assist
 Create the memory script:
 
 ```powershell
-New-Item -ItemType File -Path .\Modules\PowerShellOps\Public\Memory.ps1 -Force
+New-Item -ItemType File -Path .\Modules\PowershellOps\Public\Memory.ps1 -Force
 ```
 
 Add a simple writer:
@@ -323,7 +323,7 @@ This keeps your assistant from being stateless.
 Create the workflow script:
 
 ```powershell
-New-Item -ItemType File -Path .\Modules\PowerShellOps\Public\Workflows.ps1 -Force
+New-Item -ItemType File -Path .\Modules\PowershellOps\Public\Workflows.ps1 -Force
 ```
 
 Add the orchestration command:
@@ -352,7 +352,7 @@ This is the center of the experience.
 To load your module locally, run:
 
 ```powershell
-Import-Module .\Modules\PowerShellOps\PowerShellOps.psm1 -Force
+Import-Module .\Modules\PowershellOps\PowershellOps.psm1 -Force
 ```
 
 Try it:
@@ -435,7 +435,7 @@ function Invoke-OpsCompanion {
 Create a test file:
 
 ```powershell
-New-Item -ItemType File -Path .\Modules\PowerShellOps\Tests\PowerShellOps.Tests.ps1 -Force
+New-Item -ItemType File -Path .\Modules\PowershellOps\Tests\PowershellOps.Tests.ps1 -Force
 ```
 
 Add this:
@@ -452,7 +452,7 @@ Describe "Invoke-OpsCompanion" {
 Run the tests:
 
 ```powershell
-Invoke-Pester .\Modules\PowerShellOps\Tests\PowerShellOps.Tests.ps1
+Invoke-Pester .\Modules\PowershellOps\Tests\PowershellOps.Tests.ps1
 ```
 
 ---
@@ -482,7 +482,7 @@ flowchart LR
         B[Public/System.ps1]
         C[Public/Memory.ps1]
         D[Public/Workflows.ps1]
-        E[PowerShellOps.psm1]
+        E[PowershellOps.psm1]
     end
 
     A --> E
